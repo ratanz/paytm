@@ -93,7 +93,8 @@ router.post("/signin", async (req, res) => {
         }, JWT_SECRET);
 
         res.json({
-            token: token
+            username: user.username,
+            token: token,
         });
     } catch (error) {
         console.error("Signin error:", error);
