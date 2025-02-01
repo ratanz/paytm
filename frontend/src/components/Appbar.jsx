@@ -1,36 +1,53 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 
-export const Appbar = () => {
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        axios.get("http://localhost:3000/api/v1/user/bulk?filter=")
-            .then(response => {
-                // Assuming the first user is the logged-in user
-                setUser(response.data.user[0])
-            })
-    }, [])
+export function Appbar() {
+    const navigate = useNavigate();
+    const userData = JSON.parse(localStorage.getItem("userData") || "{}");
 
     return (
-        <div className="fixed top-2 left-0 right-0 z-50">
-            <div className="backdrop-blur-sm shadow-lg h-14 flex justify-between border- border-zinc-700/90">
-                <div className="flex flex-col justify-center h-full ml-6">
-                    <span className="text-white text-xl font-semibold">PayTM</span>
-                </div>
-                <div className="flex">
-                    <div className="flex flex-col justify-center h-full mr-4">
-                        <span className="text-gray-300 text-md">
-                            Hello, {user ? `${user.firstName} ${user.lastName}` : 'User'}
-                        </span>
-                    </div>
-                    <div className="rounded-full h-10 w-10 bg-zinc-700/80 backdrop-blur-sm flex justify-center mt-2 mr-6">
-                        <div className="flex flex-col justify-center h-full text-xl text-white">
-                            {user ? user.firstName[0] : 'U'}
+        <div className="fixed top-0 left-0 right-0 bg-zinc-800/50 backdrop-blur-sm border-b border-zinc-700/50 z-50">
+            <div className="max-w-6xl mx-auto px-4">
+                <div className="flex h-16 items-center justify-between">
+                    {/* Logo */}
+                    <button 
+                        onClick={() => navigate("/dashboard")}
+                        className="text-xl font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
+                    >
+                        PayEase
+                    </button>
+
+                    {/* User Info & Logout */}
+                    <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-3">
+                            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
+                                <span className="text-sm font-medium text-white">
+                                    {userData.firstName?.[0]?.toUpperCase() || 'U'}
+                                </span>
+                            </div>
+                            <div className="hidden sm:block">
+                                <div className="text-sm font-medium text-white">
+                                    {userData.firstName} {userData.lastName}
+                                </div>
+                                <div className="text-xs text-zinc-400">
+                                    {userData.username}
+                                </div>
+                            </div>
                         </div>
+
+                        <button
+                            onClick={() => {
+                                localStorage.clear();
+                                navigate("/signin");
+                            }}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-zinc-700/50 text-zinc-400 hover:text-white transition-colors"
+                        >
+                            <LogOut className="h-4 w-4" />
+                            <span className="text-sm hidden sm:block">Logout</span>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
