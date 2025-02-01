@@ -93,8 +93,13 @@ router.post("/signin", async (req, res) => {
         }, JWT_SECRET);
 
         res.json({
-            username: user.username,
             token: token,
+            user: {
+                _id: user._id,
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName
+            }
         });
     } catch (error) {
         console.error("Signin error:", error);
@@ -128,29 +133,38 @@ router.put("/", authMiddleware, async (req, res) => {
     })
 })
 
-router.get("/bulk", async (req, res) => {
-    const filter = req.query.filter || "";
+router.get("/bulk", authMiddleware, async (req, res) => {
+    try {
+        const filter = req.query.filter || "";
 
-    const users = await User.find({
-        $or: [{
-            firstName: {
-                "$regex": filter
-            }
-        }, {
-            lastName: {
-                "$regex": filter
-            }
-        }]
-    })
+        const users = await User.find({
+            $or: [{
+                firstName: {
+                    "$regex": filter,
+                    "$options": "i"  // Case-insensitive search
+                }
+            }, {
+                lastName: {
+                    "$regex": filter,
+                    "$options": "i"  // Case-insensitive search
+                }
+            }]
+        })
 
-    res.json({
-        user: users.map(user => ({
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            _id: user._id
-        }))
-    })
+        res.json({
+            user: users.map(user => ({
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                _id: user._id
+            }))
+        })
+    } catch (error) {
+        console.error("Error in bulk user fetch:", error);
+        res.status(500).json({
+            message: "Failed to fetch users"
+        });
+    }
 })
 
 module.exports = router;
