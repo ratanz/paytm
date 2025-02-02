@@ -17,7 +17,7 @@ export default function Signin() {
             <div className="max-w-md w-full bg-zinc-800/30 backdrop-blur-sm rounded-lg border border-zinc-700/50 shadow-lg">
                 <div className="p-6 space-y-4">
                     <Heading label="Sign In" />
-                    <SubHeading label="Welcome back to PayTM App" />
+                    <SubHeading label="Welcome back to Pay-Ease App" />
 
                     <div className="mt-6 space-y-4">
                         <InputBox

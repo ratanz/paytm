@@ -8,6 +8,7 @@ export default function SendMoney() {
     const [amount, setAmount] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
 
     const recipientId = searchParams.get("id");
@@ -22,6 +23,7 @@ export default function SendMoney() {
         try {
             setLoading(true);
             setError("");
+            setSuccess(false);
             
             await axios.post("http://localhost:3000/api/v1/account/transfer", {
                 to: recipientId,
@@ -32,7 +34,11 @@ export default function SendMoney() {
                 }
             });
 
-            navigate("/dashboard");
+            setSuccess(true);
+            // Wait for 1.5 seconds to show success message before redirecting
+            setTimeout(() => {
+                navigate("/dashboard", { state: { transferSuccess: true } });
+            }, 1500);
         } catch (error) {
             console.error("Transfer error:", error);
             setError(error.response?.data?.message || "Failed to transfer money");
@@ -89,9 +95,22 @@ export default function SendMoney() {
                             />
                         </div>
 
+                        {/* Success Message */}
+                        {success && (
+                            <div className="text-green-500 text-center py-2 px-4 bg-green-500/10 rounded-lg border border-green-500/20 flex items-center justify-center gap-2">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Payment Successful!
+                            </div>
+                        )}
+
                         {/* Error Message */}
                         {error && (
-                            <div className="text-red-500 text-center py-2 px-4 bg-red-500/10 rounded-lg border border-red-500/20">
+                            <div className="text-red-500 text-center py-2 px-4 bg-red-500/10 rounded-lg border border-red-500/20 flex items-center justify-center gap-2">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
                                 {error}
                             </div>
                         )}
