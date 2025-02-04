@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Search } from "lucide-react";
 
-export default function Users() {
+export function Users() {
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState("");
     const [loading, setLoading] = useState(true);
